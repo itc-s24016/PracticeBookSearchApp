@@ -12,6 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.practicebooksearchapp.ui.theme.PracticeBookSearchAppTheme
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Button
+import androidx.compose.ui.graphics.Color
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,8 +27,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PracticeBookSearchAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    Main(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -31,17 +37,42 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun Main(modifier: Modifier = Modifier) {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "list") {
+        composable("list") {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color.Green)
+            ){
+                Button(onClick = {
+                    navController.navigate("detail")
+                }){
+                    Text("リスト画面から詳細へ")
+                }
+            }
+        }
+        composable("detail") {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color.Blue)
+            ){
+                Button(onClick = {
+                    navController.popBackStack()
+                }){
+                    Text("詳細画面からリスト画面に戻る")
+                }
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun MainPreview() {
     PracticeBookSearchAppTheme {
-        Greeting("Android")
+        Main()
     }
 }
