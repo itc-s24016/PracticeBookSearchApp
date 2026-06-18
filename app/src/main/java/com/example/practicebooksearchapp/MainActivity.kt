@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +39,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Main(modifier: Modifier = Modifier) {
+    val viewModel: BookViewModel = viewModel()
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "list") {
         composable("list") {
@@ -47,6 +49,7 @@ fun Main(modifier: Modifier = Modifier) {
                     .background(Color.Green)
             ){
                 Button(onClick = {
+                    viewModel.searchBooks()
                     navController.navigate("detail")
                 }){
                     Text("リスト画面から詳細へ")
