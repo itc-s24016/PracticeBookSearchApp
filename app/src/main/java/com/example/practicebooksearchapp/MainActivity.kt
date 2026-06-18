@@ -20,6 +20,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,17 +56,8 @@ fun Main(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "list") {
         composable("list") {
-            Box(
-                modifier = modifier
-                    .fillMaxSize()
-                    .background(Color.Green)
-            ){
-                Button(onClick = {
-                    viewModel.searchBooks()
-                    navController.navigate("detail")
-                }){
-                    Text("リスト画面から詳細へ")
-                }
+            BookList(viewModel, modifier) { item ->
+                navController.navigate("detail")
             }
         }
         composable("detail") {
@@ -66,6 +70,61 @@ fun Main(modifier: Modifier = Modifier) {
                     navController.popBackStack()
                 }){
                     Text("詳細画面からリスト画面に戻る")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun BookList(
+    viewModel: BookViewModel,
+    modifier: Modifier,
+    onItemClick: (BookItem) -> Unit
+){
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ){
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            OutlinedTextField(
+                value = viewModel.query,
+                onValueChange = {viewModel.updateQuery(it)},
+                modifier = Modifier.weight(1f),
+                maxLines = 1,
+                placeholder = {Text("著者名を入力")}
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = {viewModel.searchBooks()},
+                enabled = viewModel.isSearchEnabled
+            ){
+                Text("検索")
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        LazyColumn(modifier = Modifier.padding(4.dp)) {
+            items(viewModel.bookItems){ item ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(1.dp)
+                        .clickable{onItemClick(item)}
+                ){
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Column{
+                            Text(text = item.volumeInfo.title)
+                        }
+                    }
                 }
             }
         }

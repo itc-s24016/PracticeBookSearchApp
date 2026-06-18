@@ -11,6 +11,16 @@ class BookViewModel: ViewModel() {
     var bookItems by mutableStateOf<List<BookItem>>(emptyList())
         private set
 
+    var query by mutableStateOf("芥川龍之介")
+        private set
+    fun updateQuery(newQuery: String){
+        query = newQuery
+    }
+
+    var isLoading by mutableStateOf(false)
+        private set
+    val isSearchEnabled get() = query.isNotEmpty() && !isLoading
+
     fun searchBooks(){
         val bookList = mutableListOf<BookItem>()
 
