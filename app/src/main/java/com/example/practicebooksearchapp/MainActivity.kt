@@ -37,6 +37,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.res.painterResource
+import coil3.compose.AsyncImage
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,6 +121,14 @@ fun BookList(
                             .padding(4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ){
+                        AsyncImage(
+                            model = item.volumeInfo.imageLinks?.smallThumbnail ?: "",
+                            contentDescription = "サムネイル画像",
+                            error = painterResource(R.drawable.no_image),
+                            placeholder = painterResource(R.drawable.loading),
+                            modifier = Modifier.size(64.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
                         Column{
                             Text(text = item.volumeInfo.title)
                             Text(text = item.volumeInfo.getAuthorsText())
