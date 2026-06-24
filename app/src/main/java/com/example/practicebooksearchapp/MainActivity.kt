@@ -40,6 +40,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.res.painterResource
 import coil3.compose.AsyncImage
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +76,28 @@ fun Main(modifier: Modifier = Modifier) {
                 navController.popBackStack()
             }
         }
+    }
+    if (viewModel.isLoading){
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable{/*なにもしない*/}
+                .background(Color.Black.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center,
+        ){
+            CircularProgressIndicator(color = Color.White)
+        }
+    }
+    if (viewModel.message.isNotEmpty()){
+        AlertDialog(
+            onDismissRequest = {viewModel.clearMessage()},
+            confirmButton = {
+                TextButton(onClick = {viewModel.clearMessage()}){
+                    Text("OK")
+                }
+            },
+            text = {Text(viewModel.message)}
+        )
     }
 }
 

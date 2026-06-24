@@ -34,6 +34,11 @@ class BookViewModel: ViewModel() {
 
     var isLoading by mutableStateOf(false)
         private set
+    var message by mutableStateOf("")
+        private set
+    fun clearMessage() {
+        message = ""
+    }
     val isSearchEnabled get() = query.isNotEmpty() && !isLoading
 
     fun searchBooks() {
@@ -54,6 +59,9 @@ class BookViewModel: ViewModel() {
             }
             bookItems = bookList
             isLoading = false
+            if (bookItems.isEmpty()){
+                message = "該当データなし"
+            }
         }
     }
 }
