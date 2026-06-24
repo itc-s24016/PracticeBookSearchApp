@@ -54,7 +54,11 @@ data class VolumeInfo(
     val authors: List<String>?,
     val description: String,
     val imageLinks: ImageLinks?
-)
+){
+    fun getAuthorsText(): String {
+        return authors?.joinToString(", ") ?: ""
+    }
+}
 
 data class ImageLinks(
     val smallThumbnail: String,

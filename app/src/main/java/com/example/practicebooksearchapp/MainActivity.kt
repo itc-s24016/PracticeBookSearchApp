@@ -120,6 +120,7 @@ fun BookList(
                     ){
                         Column{
                             Text(text = item.volumeInfo.title)
+                            Text(text = item.volumeInfo.getAuthorsText())
                         }
                     }
                 }
@@ -152,6 +153,14 @@ fun BookDetail(
                 Text("書名：")
                 Text(
                     text = volumeInfo?.title ?: ""
+                )
+            }
+            Row(
+                modifier = Modifier.padding(4.dp)
+            ){
+                Text("著者：")
+                Text(
+                    text = volumeInfo?.getAuthorsText() ?: ""
                 )
             }
         }

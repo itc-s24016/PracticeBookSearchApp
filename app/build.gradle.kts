@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.code.gson:gson:2.13.2")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.2.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
     implementation("androidx.navigation:navigation-compose:2.9.6")
