@@ -33,6 +33,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.border
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,20 +61,13 @@ fun Main(modifier: Modifier = Modifier) {
     NavHost(navController = navController, startDestination = "list") {
         composable("list") {
             BookList(viewModel, modifier) { item ->
+                viewModel.selectBook(item)
                 navController.navigate("detail")
             }
         }
         composable("detail") {
-            Box(
-                modifier = modifier
-                    .fillMaxSize()
-                    .background(Color.Blue)
-            ){
-                Button(onClick = {
-                    navController.popBackStack()
-                }){
-                    Text("詳細画面からリスト画面に戻る")
-                }
+            BookDetail(viewModel, modifier) {
+                navController.popBackStack()
             }
         }
     }
@@ -128,6 +125,50 @@ fun BookList(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun BookDetail(
+    viewModel: BookViewModel,
+    modifier: Modifier,
+    onClick: () -> Unit
+){
+    val volumeInfo = viewModel.selectedBook?.volumeInfo
+    val scrollState = rememberScrollState()
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color.Black, RoundedCornerShape(4.dp))
+        ) {
+            Row(
+                modifier = Modifier.padding(4.dp)
+            ){
+                Text("書名：")
+                Text(
+                    text = volumeInfo?.title ?: ""
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = volumeInfo?.description ?: "",
+            modifier = Modifier
+                .verticalScroll(scrollState)
+                .fillMaxWidth()
+                .border(1.dp, Color.Black, RoundedCornerShape(4.dp))
+                .weight(1f)
+                .padding(8.dp)
+        )
+        Button(
+            onClick = onClick,
+            modifier = Modifier.fillMaxWidth()
+        ){ Text("戻る") }
     }
 }
 

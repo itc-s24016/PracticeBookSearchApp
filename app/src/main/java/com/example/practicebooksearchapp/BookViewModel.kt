@@ -17,6 +17,12 @@ class BookViewModel: ViewModel() {
         query = newQuery
     }
 
+    var selectedBook by mutableStateOf<BookItem?>(null)
+        private set
+    fun selectBook(book: BookItem){
+        selectedBook = book
+    }
+
     var isLoading by mutableStateOf(false)
         private set
     val isSearchEnabled get() = query.isNotEmpty() && !isLoading
