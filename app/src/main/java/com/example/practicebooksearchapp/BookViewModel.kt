@@ -15,6 +15,7 @@ import okhttp3.Request
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import com.google.gson.Gson
+import okio.IOException
 
 class BookViewModel: ViewModel() {
     var bookItems by mutableStateOf<List<BookItem>>(emptyList())
@@ -44,23 +45,35 @@ class BookViewModel: ViewModel() {
     fun searchBooks() {
         viewModelScope.launch {
             isLoading = true
-            val bookList = withContext(Dispatchers.IO) {
-                val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8.toString())
-                val apiUrl =
-                    "https://www.googleapis.com/books/v1/volumes?q=inauthor:${encodedQuery}&maxResults=20" + "&key=AIzaSyCG1xGiX5E-7UFdOWwb3m5JaFJH1u1CzQg"
-                val client = OkHttpClient()
-                val request = Request.Builder().url(apiUrl).get().build()
-                val response = client.newCall(request).execute()
-                val responseBody = response.body?.string() ?: ""
-                val gson = Gson()
-                val res = gson.fromJson(responseBody, BookInfo::class.java)
-                val bookList = res.items ?: emptyList()
-                return@withContext bookList
-            }
-            bookItems = bookList
-            isLoading = false
-            if (bookItems.isEmpty()){
-                message = "該当データなし"
+            try {
+                val bookList = withContext(Dispatchers.IO) {
+                    val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8.toString())
+                    val apiUrl =
+                        "https://www.googleapis.com/books/v1/volumes?q=inauthor:${encodedQuery}&maxResults=20" + "&key=AIzaSyCG1xGiX5E-7UFdOWwb3m5JaFJH1u1CzQg"
+                    val client = OkHttpClient()
+                    val request = Request.Builder().url(apiUrl).get().build()
+                    val responseBody = client.newCall(request).execute().use { response ->
+                        if (!response.isSuccessful){
+                            throw Exception("HTTP ステータス：${response.code}")
+                        }
+                        response.body?.string() ?: ""
+                    }
+                    val gson = Gson()
+                    val res = gson.fromJson(responseBody, BookInfo::class.java)
+                    val bookList = res.items ?: emptyList()
+                    return@withContext bookList
+                }
+                bookItems = bookList
+
+                if (bookItems.isEmpty()) {
+                    message = "該当データなし"
+                }
+            } catch (e: IOException){
+                message = "通信エラーが発生しました。時間をおいて再試行してください。\n${e.message}"
+            } catch (e: Exception){
+                message = "書籍情報の取得に失敗しました。\n${e.message}"
+            } finally {
+                isLoading = false
             }
         }
     }
