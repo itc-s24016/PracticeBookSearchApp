@@ -1,11 +1,9 @@
 package com.example.practicebooksearchapp
 
 import androidx.lifecycle.ViewModel
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
-import org.json.JSONObject
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,13 +24,11 @@ class BookViewModel: ViewModel() {
     fun updateQuery(newQuery: String){
         query = newQuery
     }
-
     var selectedBook by mutableStateOf<BookItem?>(null)
         private set
     fun selectBook(book: BookItem){
         selectedBook = book
     }
-
     var isLoading by mutableStateOf(false)
         private set
     var message by mutableStateOf("")
